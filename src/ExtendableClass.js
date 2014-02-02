@@ -8,15 +8,15 @@
 	ExtendableClass.addPublicMethod = function (publicProperty, publicMethod) {
 		var overridedMethod = this.prototype[publicProperty];
 
-		var methodHandler = function (...methodArgs) {
-			this.super = function (...superArgs) {
+		var methodHandler = function () {
+			this.super = function () {
 				var tmp = this.super;
 
-				var returnedValue = overridedMethod.apply(this, superArgs);
+				var returnedValue = overridedMethod.apply(this, arguments);
 				return returnedValue;
 			};
 
-			var returnedValue = publicMethod.apply(this, methodArgs);
+			var returnedValue = publicMethod.apply(this, arguments);
 			return returnedValue;
 		}
 		this.prototype[publicProperty] = methodHandler;
@@ -54,42 +54,45 @@
 			var privateThis = new this.constructor.PrivateClass();
 			var dataThis = new this.constructor.DataClass();
 
-			for ( var publicProperty in publicThis ) {
-				(function (publicProperty, propertyValue) {
-					if (publicProperty == "constructor") return;
+			var configPublicProperty = function (publicProperty, propertyValue) {
+				if (publicProperty == "constructor") return;
 
-					if ( typeof(propertyValue) == "function" ) {
-						publicThis[publicProperty] = propertyValue.bind(privateThis);
-					} else {
-						Object.defineProperty(publicThis, publicProperty, {
-							get: function () {
-								return dataThis[publicProperty];
-							},
-							set: function (newValue) {
-								dataThis[publicProperty] = newValue;
-							}
-						});
-					}
-				})(publicProperty, publicThis[publicProperty]);
+				if ( typeof(propertyValue) == "function" ) {
+					publicThis[publicProperty] = propertyValue.bind(privateThis);
+				} else {
+					Object.defineProperty(publicThis, publicProperty, {
+						get: function () {
+							return dataThis[publicProperty];
+						},
+						set: function (newValue) {
+							dataThis[publicProperty] = newValue;
+						}
+					});
+				}
+			}
+
+			var configPrivateProperty = function (privateProperty, propertyValue) {
+				if (privateProperty == "constructor") return;
+				if (privateProperty == "super") return;
+
+				if (typeof(propertyValue) != "function") {
+					Object.defineProperty(privateThis, privateProperty, {
+						get: function () {
+							return dataThis[privateProperty];
+						},
+						set: function (newValue) {
+							dataThis[privateProperty] = newValue;
+						}
+					});
+				}
+			}
+
+			for ( var publicProperty in publicThis ) {
+				configPublicProperty(publicProperty, publicThis[publicProperty]);
 			}
 
 			for (var privateProperty in privateThis) {
-				(function (privateProperty, propertyValue) {
-					if (privateProperty == "constructor") return;
-
-					if (typeof(propertyValue) == "function") {
-						//
-					} else {
-						Object.defineProperty(privateThis, privateProperty, {
-							get: function () {
-								return dataThis[privateProperty];
-							},
-							set: function (newValue) {
-								dataThis[privateProperty] = newValue;
-							}
-						});
-					}
-				})(privateProperty, privateThis[privateProperty]);
+				configPrivateProperty(privateProperty, privateThis[privateProperty]);
 			}
 		};
 		var PrivateClass = function () {};
@@ -104,6 +107,8 @@
 		PrivateClass.prototype.constructor = PublicClass;
 		DataClass.prototype = dataPrototype;
 		DataClass.prototype.constructor = PublicClass;
+
+		PrivateClass.prototype.super = null;
 
 		PublicClass.extend = this.extend;
 		PublicClass.addPublicMethod = this.addPublicMethod
