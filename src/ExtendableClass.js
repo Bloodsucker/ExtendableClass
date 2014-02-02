@@ -8,16 +8,29 @@
 	ExtendableClass.addPublicMethod = function (publicProperty, publicMethod) {
 		var overridedMethod = this.prototype[publicProperty];
 
-		var methodHandler = function () {
-			this.super = function () {
-				var tmp = this.super;
+		var methodHandler;
+		if(overridedMethod) {
+			methodHandler = function () {
+				this.super = function () {
+					var tmp = this.super;
 
-				var returnedValue = overridedMethod.apply(this, arguments);
+					var returnedValue = overridedMethod.apply(this, arguments);
+
+					this.super = tmp;
+
+					return returnedValue;
+				};
+
+				var returnedValue = publicMethod.apply(this, arguments);
 				return returnedValue;
-			};
-
-			var returnedValue = publicMethod.apply(this, arguments);
-			return returnedValue;
+			}
+		} else {
+			methodHandler = function () {
+				this.super = null;
+				
+				var returnedValue = publicMethod.apply(this, arguments);
+				return returnedValue;
+			}
 		}
 
 		this.prototype[publicProperty] = methodHandler;
@@ -29,16 +42,29 @@
 	ExtendableClass.addProtectedMethod = function (protectedProperty, protectedMethod) {
 		var overridedMethod = this.ProtectedClass.prototype[protectedProperty];
 
-		var methodHandler = function () {
-			this.super = function () {
-				var tmp = this.super;
+		var methodHandler;
+		if(overridedMethod) {
+			methodHandler = function () {
+				this.super = function () {
+					var tmp = this.super;
 
-				var returnedValue = overridedMethod.apply(this, arguments);
+					var returnedValue = overridedMethod.apply(this, arguments);
+
+					this.super = tmp;
+
+					return returnedValue;
+				};
+
+				var returnedValue = protectedMethod.apply(this, arguments);
 				return returnedValue;
-			};
+			}
+		} else {
+			methodHandler = function () {
+				this.super = null;
 
-			var returnedValue = protectedMethod.apply(this, arguments);
-			return returnedValue;
+				var returnedValue = protectedMethod.apply(this, arguments);
+				return returnedValue;
+			}
 		}
 
 		this.ProtectedClass.prototype[protectedProperty] = methodHandler;
