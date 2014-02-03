@@ -138,7 +138,10 @@
 	}
 
 	ExtendableClass.ProtectedClass = function () {};
+
 	ExtendableClass.DataClass = function () {};
+
+	ExtendableClass.constructorMethod = null;
 
 	ExtendableClass.extend = function () {
 		this.PublicClass = function () {
@@ -191,6 +194,11 @@
 				this.constructor.constructorMethod.apply(protectedThis, arguments);
 		};
 
+		for (var p in this) {
+			this.PublicClass[p] = this[p];
+		}
+
+		this.PublicClass.PublicClass = null;
 		this.PublicClass.ProtectedClass = function () {};
 		this.PublicClass.DataClass = function () {};
 
@@ -202,16 +210,6 @@
 		this.PublicClass.DataClass.prototype.constructor = this.PublicClass;
 
 		this.ProtectedClass.prototype.super = null;
-		this.PublicClass.constructorMethod = this.constructorMethod;
-
-		this.PublicClass.extend = this.extend;
-		this.PublicClass.initialize = this.initialize;
-		this.PublicClass.addPublicMethod = this.addPublicMethod
-		this.PublicClass.addProtectedMethod = this.addProtectedMethod;
-		this.PublicClass.addPublicProperty = this.addPublicProperty;
-		this.PublicClass.addProtectedProperty = this.addProtectedProperty;
-		this.PublicClass.public = this.public;
-		this.PublicClass.protected = this.protected;
 
 		return this.PublicClass;
 	}
