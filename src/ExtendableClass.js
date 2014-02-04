@@ -155,14 +155,24 @@
 				if ( typeof(propertyValue) == "function" ) {
 					publicThis[publicProperty] = propertyValue.bind(protectedThis);
 				} else {
-					Object.defineProperty(publicThis, publicProperty, {
-						get: function () {
+					var propertyDescriptor = {};
+
+					if ( typeof(propertyValue) == "object" && propertyValue.constant ) {
+						propertyDescriptor.writable = false;
+						propertyDescriptor.value = propertyValue.value;
+					} else {
+						if ( typeof(propertyValue) == "object" )
+							dataThis[publicProperty] = propertyValue.value;
+
+						propertyDescriptor.get = function () {
 							return dataThis[publicProperty];
-						},
-						set: function (newValue) {
+						};
+						propertyDescriptor.set = function (newValue) {
 							dataThis[publicProperty] = newValue;
-						}
-					});
+						};
+					}
+
+					Object.defineProperty(publicThis, publicProperty, propertyDescriptor);
 				}
 			}
 
@@ -171,14 +181,24 @@
 				if (protectedProperty == "super") return;
 
 				if (typeof(propertyValue) != "function") {
-					Object.defineProperty(protectedThis, protectedProperty, {
-						get: function () {
+					var propertyDescriptor = {};
+
+					if(typeof(propertyValue) == "object" && propertyValue.constant) {
+						propertyDescriptor.writable = false;
+						propertyDescriptor.value = propertyValue.value;	
+					} else {
+						if ( typeof(propertyValue) == "object" )
+							dataThis[protectedProperty] = propertyValue.value;
+						
+						propertyDescriptor.get = function () {
 							return dataThis[protectedProperty];
-						},
-						set: function (newValue) {
+						};
+						propertyDescriptor.set = function (newValue) {
 							dataThis[protectedProperty] = newValue;
-						}
-					});
+						};
+					}
+
+					Object.defineProperty(protectedThis, protectedProperty, propertyDescriptor);
 				}
 			}
 
