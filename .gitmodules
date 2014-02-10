@@ -1,3 +1,3 @@
-[submodule "submodules/qunit"]
-	path = submodules/qunit
-	url = https://github.com/jquery/qunit.git
+[submodule "submodules/jasmine"]
+	path = submodules/jasmine
+	url = https://github.com/pivotal/jasmine.git
