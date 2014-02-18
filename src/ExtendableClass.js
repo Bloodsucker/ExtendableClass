@@ -143,6 +143,8 @@
 
 	ExtendableClass.constructorMethod = null;
 
+	ExtendableClass.parents = [];
+
 	ExtendableClass.extend = function () {
 		this.PublicClass = function () {
 			var publicThis = this;
@@ -221,6 +223,7 @@
 		this.PublicClass.PublicClass = null;
 		this.PublicClass.ProtectedClass = function () {};
 		this.PublicClass.DataClass = function () {};
+		this.PublicClass.parents = [this];
 
 		this.PublicClass.prototype = Object.create(this.prototype);
 		this.PublicClass.prototype.constructor = this.PublicClass;

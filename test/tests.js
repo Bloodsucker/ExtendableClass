@@ -19,6 +19,11 @@ describe("ExtendableClass is a Function", function () {
 			expect(typeof GeneratedFunction).toMatch("function");
 		});
 	});
+
+	it("has a public .parents that does not have references", function () {
+		expect(ExtendableClass.parents instanceof Array).toBe(true);
+		expect(ExtendableClass.parents.length).toBe(0);
+	});
 });
 
 describe("ExtendableClass is a Class", function () {
@@ -29,10 +34,9 @@ describe("ExtendableClass is a Class", function () {
 			expect(NewClass.extend).toBe(ExtendableClass.extend);
 		});
 
-		xit(".parents is an Array property with the parent classes", function () {
-			expect(typeof NewClass.parents).toMatch("array");
-			expect(NewClass.parents.length).toBe(1);
-			expect(NewClass.parents[0]).toBe(ExtendableClass);
+		it(".parents is an Array property with the direct parent classes", function () {
+			expect(NewClass.parents instanceof Array).toBe(true);
+			expect(NewClass.parents).toEqual([ExtendableClass]);
 		});
 	});
 });
@@ -41,13 +45,27 @@ describe ("The generated Class of ExtendableClass", function () {
 	var NewClass = ExtendableClass.extend();
 
 	describe("instances an object", function () {
-		var instancedObject = new NewClass();	it("is an instance of it", function () {
-		expect(typeof instancedObject).toMatch("object");
+		var instancedObject = new NewClass();
+
+		it("is an instance of it", function () {
+			expect(typeof instancedObject).toMatch("object");
 			expect(instancedObject instanceof NewClass).toBe(true);
 		});
 		
 		it("is also an instance from 'parent' classes (like ExtendableClass)", function () {
 			expect(instancedObject instanceof ExtendableClass).toBe(true);
+		});
+	});
+
+	describe("the descendant classes", function () {
+		var NewClass1 = NewClass.extend();
+		var NewClass2 = NewClass1.extend();
+		it(".parents property defines from who they are inheriting directly", function () {
+			expect(NewClass1.parents instanceof Array).toBe(true);
+			expect(NewClass2.parents instanceof Array).toBe(true);
+
+			expect(NewClass1.parents).toEqual([NewClass]);
+			expect(NewClass2.parents).toEqual([NewClass1]);
 		});
 	});
 	
