@@ -1,3 +1,13 @@
+/*!
+ * Author: José Cabo Carsí
+ * 
+ * ExtendableCLass JavaScript Library v0.1
+ * https://github.com/Bloodsucker/ExtendableClass
+ * 
+ * Copyright 2013, 2014 josecabocarsi@gmail.com
+ * Released under LGPLv3
+ * http://www.gnu.org/copyleft/lesser.html
+ */
 (function (window) {
 "use strict";
 
