@@ -9,7 +9,7 @@
  * http://www.gnu.org/copyleft/lesser.html
  */
 (function (window) {
-"use strict";
+	"use strict";
 
 	var ExtendableClass = function () {
 	};
@@ -33,21 +33,21 @@
 
 				var returnedValue = publicMethod.apply(this, arguments);
 				return returnedValue;
-			}
+			};
 		} else {
 			methodHandler = function () {
 				this.super = null;
 				
 				var returnedValue = publicMethod.apply(this, arguments);
 				return returnedValue;
-			}
+			};
 		}
 
 		this.prototype[publicProperty] = methodHandler;
 		this.ProtectedClass.prototype[publicProperty] = methodHandler;
 
 		return this;
-	}
+	};
 
 	ExtendableClass.addProtectedMethod = function (protectedProperty, protectedMethod) {
 		var overridedMethod = this.ProtectedClass.prototype[protectedProperty];
@@ -67,20 +67,20 @@
 
 				var returnedValue = protectedMethod.apply(this, arguments);
 				return returnedValue;
-			}
+			};
 		} else {
 			methodHandler = function () {
 				this.super = null;
 
 				var returnedValue = protectedMethod.apply(this, arguments);
 				return returnedValue;
-			}
+			};
 		}
 
 		this.ProtectedClass.prototype[protectedProperty] = methodHandler;
 
 		return this;
-	}
+	};
 
 	ExtendableClass.addPublicProperty = function (publicProperty, propertyValue) {
 		this.prototype[publicProperty] = propertyValue;
@@ -88,14 +88,14 @@
 		this.DataClass.prototype[publicProperty] = propertyValue;
 
 		return this;
-	}
+	};
 
 	ExtendableClass.addProtectedProperty = function (protectedProperty, propertyValue) {
 		this.ProtectedClass.prototype[protectedProperty] = propertyValue;
 		this.DataClass.prototype[protectedProperty] = propertyValue;
 
 		return this;
-	}
+	};
 
 	ExtendableClass.public = function (publicObject) {
 		for ( var publicProperty in publicObject ) {
@@ -107,7 +107,7 @@
 		}
 
 		return this;
-	}
+	};
 
 	ExtendableClass.protected = function (protectedObject) {
 		for ( var protectedProperty in protectedObject ) {
@@ -119,7 +119,7 @@
 		}
 
 		return this;
-	}
+	};
 
 	ExtendableClass.initialize = function (constructorMethod) {
 		if (this.constructorMethod) {
@@ -136,7 +136,7 @@
 				};
 
 				constructorMethod.apply(this, arguments);
-			}
+			};
 		} else {
 			this.constructorMethod = function () {
 				this.super = null;
@@ -145,7 +145,7 @@
 		}
 
 		return this;
-	}
+	};
 
 	ExtendableClass.ProtectedClass = function () {};
 
@@ -186,7 +186,7 @@
 
 					Object.defineProperty(publicThis, publicProperty, propertyDescriptor);
 				}
-			}
+			};
 
 			var configProtectedProperty = function (protectedProperty, propertyValue) {
 				if (protectedProperty == "constructor") return;
@@ -212,7 +212,7 @@
 
 					Object.defineProperty(protectedThis, protectedProperty, propertyDescriptor);
 				}
-			}
+			};
 
 			for ( var publicProperty in publicThis ) {
 				configPublicProperty(publicProperty, publicThis[publicProperty]);
@@ -245,5 +245,5 @@
 		this.ProtectedClass.prototype.super = null;
 
 		return this.PublicClass;
-	}
+	};
 })(window);
