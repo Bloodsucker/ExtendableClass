@@ -52,7 +52,7 @@ describe ("The generated Class of ExtendableClass", function () {
 			expect(instancedObject instanceof NewClass).toBe(true);
 		});
 		
-		it("is also an instance from 'parent' classes (like ExtendableClass)", function () {
+		it("is also an instsance from 'parent' classes (like ExtendableClass)", function () {
 			expect(instancedObject instanceof ExtendableClass).toBe(true);
 		});
 	});
@@ -80,6 +80,117 @@ describe ("The generated Class of ExtendableClass", function () {
 			expect(instancedObject instanceof NewClass1).toBe(true);
 			expect(instancedObject instanceof NewClass).toBe(true);
 			expect(instancedObject instanceof ExtendableClass).toBe(true);
+		});
+	});
+});
+
+describe("The method .addPublicMethod from ExtendableClass classes", function () {
+	var NewClass = ExtendableClass.extend();
+
+	var methodName = "myNewMethod";
+	var randomNumber = Math.random();
+	var method = function () {
+		return randomNumber;
+	};
+
+	NewClass.addPublicMethod(methodName, method);
+
+	it("adds a new public method to an object instance of the class", function () {
+		expect(typeof NewClass.prototype[methodName]).toMatch("function");
+
+		var newObject = new NewClass();
+
+		expect( newObject[methodName]() ).toBe(randomNumber);
+	});
+
+	describe("In a descendant class, the added public method from a parent Class", function () {
+		var NewClass2 = NewClass.extend();
+
+		it("inherits the method", function () {
+			expect(typeof NewClass2.prototype[methodName]).toMatch("function");
+
+			var newObject2 = new NewClass2();
+
+			expect( newObject2[methodName]() ).toBe(randomNumber);
+		})
+	});
+});
+
+describe("The method .addPublicProperty from a ExtendableClass class", function () {
+	var randomNumber = Math.random();
+
+	var NewClass = ExtendableClass.extend()
+		.addPublicProperty("myProperty", randomNumber);
+
+	it("adds a new public property to object instance of the class", function () {
+		expect(NewClass.prototype.hasOwnProperty("myProperty")).toBe(true);
+		expect(typeof NewClass.prototype.myProperty).toMatch("number");
+
+		var newObject = new NewClass();
+
+		expect(newObject.myProperty).toBe(randomNumber);
+	});
+
+	describe("In a descendant class, the added property in parent class", function () {
+		var NewClass2 = NewClass.extend();
+		it("inherits the property", function () {
+			expect(NewClass.prototype.hasOwnProperty("myProperty")).toBe(true);
+			expect(typeof NewClass.prototype.myProperty).toMatch("number");
+
+			var newObject2 = new NewClass2();
+
+			expect(newObject2.myProperty).toBe(randomNumber);
+		})
+	});
+});
+
+describe("The method .public from ExtendableClass classes", function () {
+	var methodReturnValue1 = Math.random();
+	var methodReturnValue2 = Math.random();
+	var propertyValue1 = Math.random();
+	var propertyValue2 = Math.random();
+
+	var NewClass = ExtendableClass.extend()
+		.public({
+			method1: function () {
+				return methodReturnValue1;
+			},
+			method2: function () {
+				return methodReturnValue2;
+			},
+			myProperty1: propertyValue1,
+			myProperty2: propertyValue2
+		});
+
+	it("adds several new public methods and properties to an object instance of the class", function () {
+		expect(typeof NewClass.prototype.method1).toMatch("function");
+		expect(typeof NewClass.prototype.method2).toMatch("function");
+		expect(typeof NewClass.prototype.myProperty1).toMatch("number");
+		expect(typeof NewClass.prototype.myProperty2).toMatch("number");
+
+		var newObject = new NewClass();
+
+		expect(newObject.method1()).toBe(methodReturnValue1);
+		expect(newObject.method2()).toBe(methodReturnValue2);
+		expect(newObject.myProperty1).toBe(propertyValue1);
+		expect(newObject.myProperty2).toBe(propertyValue2);
+	});
+
+	describe("In a descendant class, properties and methods added to its parent class", function () {
+		var NewClass2 = NewClass.extend();
+
+		it("inherits them", function () {
+			expect(typeof NewClass2.prototype.method1).toMatch("function");
+			expect(typeof NewClass2.prototype.method2).toMatch("function");
+			expect(typeof NewClass2.prototype.myProperty1).toMatch("number");
+			expect(typeof NewClass2.prototype.myProperty2).toMatch("number");
+
+			var newObject2 = new NewClass2();
+
+			expect(newObject2.method1()).toBe(methodReturnValue1);
+			expect(newObject2.method2()).toBe(methodReturnValue2);
+			expect(newObject2.myProperty1).toBe(propertyValue1);
+			expect(newObject2.myProperty2).toBe(propertyValue2);
 		});
 	});
 });
