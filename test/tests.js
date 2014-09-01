@@ -52,7 +52,7 @@ describe ("The generated Class of ExtendableClass", function () {
 			expect(instancedObject instanceof NewClass).toBe(true);
 		});
 		
-		it("is also an instsance from 'parent' classes (like ExtendableClass)", function () {
+		it("is also an instance from 'parent' classes (like ExtendableClass)", function () {
 			expect(instancedObject instanceof ExtendableClass).toBe(true);
 		});
 	});
