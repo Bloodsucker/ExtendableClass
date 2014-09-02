@@ -32,68 +32,74 @@ How to use it
 -------------
 1. Creating a new simple class:
 
-    ```javascript
-    var SimpleNewClass = ExtendableClass.extend();
-    var myNewObject = new SimpleNewClass();
-    ```
+	```javascript
+	var Animal = ExtendableClass.extend(); //It inherits from ExtendableClass base-class.
+	```
+	
+	A simple Animal class.
 
 2. Adding new public methods or properties:
 
-    ```javascript
-    var SimpleNewClass = ExtendableClass.extend()
-        .public({
-            aProperty: 5,
-            
-            myMethod: function () {
-                return this.aProperty; //Accessing to public property with value: 5
-            }
-        });
-    
-    var myNewObject = new SimpleNewClass();
-    console.log( myNewObject.myMethod() ); //5
-    ```
+	```javascript
+	Animal
+		.public({
+			animalSound: "",
+			animalSays: function () {
+				return this.animalSound;
+			}
+		});
+	```
+	
+	An Animal can reproduce its sound through its new method animalSays.
 
-3. Adding new protected methods or properties:
+3. Adding new protected methods or properties and inheriting from a class:
 
-    ```javascript
-    var SimpleNewClass = ExtendableClass.extend()
-        .public({
-            aProperty: 5,
-            
-            myMethod: function () {
-                this.myProtectedMethod(); //Access to a protected method.
-                return this.aProtectedProp; //This time, it access to the protected property.
-            }
-        })
-        .protected({ //Creates protected methods and properties at once.
-            aProtectedProp: 10,
-            
-            myProtectedMethod: function () {
-                this.aProtectedProp += this.aProperty; //It can access to a protected property and to a public one!
-            }
-        });
-    
-    var myNewObject = new SimpleNewClass();
-    console.log( myNewObject.myMethod() ); //15 (aProperty (5) + aProtectedProp (10))
-    ```
+	```javascript
+	var Dog = Animal.extend()
+		.protected({
+			updateSound: function (newSound) {
+				this.animalSound = newSound; //Accessing to a public property from the private context.
+			}
+		});
+	```
+	
+	And in the third tick, a Dog class was created. However not everyone can change its sound.
+	
+4. Defining a class constructor:
+
+	```javascript
+	Dog
+		.initialize(function (dogSound) {
+			// Only from a private context one can have access to a protected method/property.
+			this.updateSound( dogSound ); //Protected method
+		});
+	```
+	
+	So, in order to personalize the Dog sound, it allows to initialize the sound at the beginning.
+
+5. Instantiating a new class into an object:
+
+	```javascript
+	var barney = new Dog( 'wau wau!' );
+	console.log( barney.animalSays() ); //It print return 'wau wau!'
+	```
+	
+	A dog caled barney was born... and he likes to say "wau wau!" to everyone.
 
 Hey!
 ----
-Do you want to use it in your project or you have any comment? I will be so glad to hear it so please, [let me know]
+Do you want to use it in your project or have any comment? I will be so glad to hear it so, please, [let me know](#contacts-credits-and-license).
 
-Credits and license
+Contacts, credits and license
 -------
-> [José Cabo Carsí]
 > [ExtendableClass JavaScript Library]
 >
 > Released under [LGPLv3]
 >
 > Basically you can use it wherever you want but keeping any code modification with the same license or compatible.
 >
-> Copyright 2014 - [josecabocarsi@gmail.com]
+> Copyright 2014 - [José Cabo Carsí] - josecabocarsi@gmail.com
 
 [ExtendableClass JavaScript Library]:https://github.com/Bloodsucker/ExtendableClass
 [LGPLv3]:http://www.gnu.org/copyleft/lesser.html
 [José Cabo Carsí]:https://github.com/Bloodsucker
-[josecabocarsi@gmail.com]:josecabocarsi@gmail.com
-[let me know]:josecabocarsi@gmail.com
