@@ -90,16 +90,13 @@ Hey!
 ----
 Do you want to use it in your project or have any comment? I will be so glad to hear it so, please, [let me know](#contacts-credits-and-license).
 
-Contacts, credits and license
+Contact, credit and license
 -------
-> [ExtendableClass JavaScript Library]
->
-> Released under [LGPLv3]
->
-> Basically you can use it wherever you want but keeping any code modification with the same license or compatible.
->
-> Copyright 2014 - [José Cabo Carsí] - josecabocarsi@gmail.com
+Released under [LGPLv3]
 
-[ExtendableClass JavaScript Library]:https://github.com/Bloodsucker/ExtendableClass
+Basically you can use it *wherever you want* but keeping any code modification with the same license or compatible. Please, do not forget about credits :smiley:
+
+Copyright 2014 - [José Cabo Carsí] - josecabocarsi@gmail.com
+
 [LGPLv3]:http://www.gnu.org/copyleft/lesser.html
 [José Cabo Carsí]:https://github.com/Bloodsucker
