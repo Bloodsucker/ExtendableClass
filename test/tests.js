@@ -195,6 +195,33 @@ describe("The method .public from ExtendableClass classes", function () {
 	});
 });
 
+describe("The method addProtectedMethod from a ExtendableClass", function () {
+	var protectedMethodName = "protectedMethodName";
+	var notAPublicValue = Math.random();
+
+	var NewClass = ExtendableClass.extend()
+		.addProtectedMethod(protectedMethodName, function () {
+			return notAPublicValue;
+		});
+
+	it("adds a protected method that cannot be accessible from the public scope, only from the protected scope", function () {
+		expect(NewClass.prototype[protectedMethodName]).toBeUndefined();
+		expect(typeof NewClass.ProtectedClass.prototype[protectedMethodName]).toBe("function");
+
+		NewClass
+			.addPublicMethod("testProtectedMethod", function () {
+				expect( typeof this[protectedMethodName] ).toBe("function");
+				expect( this[protectedMethodName]() ).toBe(notAPublicValue);
+			});
+
+		var newObject = new NewClass();
+
+		expect(newObject[protectedMethodName]).toBeUndefined();
+
+		newObject.testProtectedMethod();
+	});
+});
+
 (function() {
 	var jasmineEnv = jasmine.getEnv();
 	jasmineEnv.updateInterval = 250;
