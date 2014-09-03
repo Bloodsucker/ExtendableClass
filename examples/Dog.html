@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>The Dog is also an Animal example - ExtendableClass</title>
+		<link rel="stylesheet" href="../submodules/jasmine/lib/jasmine-core/jasmine.css">
+
+		<script type="text/javascript" src="../src/ExtendableClass.js" ></script>
+
+		<script type="text/javascript">
+			var Animal = ExtendableClass.extend() //It inherits from ExtendableClass base-class.
+				.public({
+					animalSound: "",
+					animalSays: function () {
+						return this.animalSound;
+					}
+				});
+
+			var Dog = Animal.extend()
+				.protected({
+					updateSound: function (newSound) {
+						this.animalSound = newSound; //Accessing to a public property from the private context.
+					}
+				})
+				.initialize(function (dogSound) {
+					// Only from a private context one can have access to a protected method/property.
+					this.updateSound( dogSound ); //Protected method
+				});
+
+			var barney = new Dog( 'wau wau!' );
+			console.log( barney.animalSays() ); //It print return 'wau wau!'
+		</script>
+	</head>
+	<body>
+	</body>
+</html>
