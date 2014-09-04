@@ -6,6 +6,7 @@ Nowadays, ExtendableClass has tested support for:
  - Constructor.
  - Public methods and properties.
  - Protected methods and properties.
+ - Make it work with the **this** variable as in other OO languages!
  - Simple class inheritance, which is compatible with the previous features!
 
 Is it usable?
