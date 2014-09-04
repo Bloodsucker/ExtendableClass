@@ -81,17 +81,114 @@ How to use it
 
 	```javascript
 	var barney = new Dog( 'wau wau!' );
-	console.log( barney.animalSays() ); //It print return 'wau wau!'
+	console.log( barney.animalSays() ); //It prints 'wau wau!'
 	```
 	
-	A dog caled barney was born... and he likes to say "wau wau!" to everyone.
+	A dog called barney was born... and he likes to say "wau wau!" to everyone.
+
+## ExtendableClass API Quick Referece
+ - The _AClass_ variable defines a descendant class of the ExtendableClass class.
+ - The _AnObject_ variable desfines an instantiated object from an ExtendableClass descendant class.
+
+#### _AClass.extend()_
+Every class should extend from ExtendableClass which is the base class for every class with support for this library. Applied to an existing class, it creates a new class which inherits from the applied class.
+
+ * Arguments: none.
+ * Returns: The new descendat class of AClass.
+
+```javascript
+var NewClass = ExtendableClass.extend();
+```
+
+#### _AClass.addPublicMethod(methodName, method)_
+Creates a new public method in the class AClass.
+ * Arguments:
+    1. _methodName_ {string} The name of the new method.
+    2. _method_ {function} The function method or callback to be executed when method is going to be executed.
+ * Returns: The AClass class.
+
+ ```javascript
+ var NewClass = ExtendableClass.extend();
+ ```
+
+#### _AClass.addPublicProperty(propertyName, propertyValue)_
+Creates a new public public property in the class AClass.
+ * Arguments:
+    1. _propertyName_ {string} The name of the new property
+    2. _method_ {*} The value for the new property
+ * Returns: The AClass class.
+
+ ```javascript
+ var NewClass = ExtendableClass.extend()
+ 	.addPublicProperty( "propertyName", "I am a property value" );
+ ```
+
+#### _AClass.addProtectedMethod(methodName, method)_
+Creates a new protected method in the class AClass.
+ * Arguments:
+    1. _methodName_ {string} The name of the new method.
+    2. _method_ {function} The function method or callback to be executed when method is going to be executed.
+ * Returns: The AClass class.
+
+ ```javascript
+ var NewClass = ExtendableClass.extend()
+ 	.addProtectedMethod( "methodName", function () {
+ 		return "a return value";
+ 	});
+ ```
+
+#### _AClass.addProtectedProperty(propertyName, propertyValue)_
+Creates a new protected public property in the class AClass.
+ * Arguments:
+    1. _propertyName_ {string} The name of the new property
+    2. _method_ {*} The value for the new property
+ * Returns: The AClass class.
+
+ ```javascript
+ var NewClass = ExtendableClass.extend()
+ 	.addProtectedProperty( "propertyName", "I am a property value");
+ ```
+
+#### _AClass.public( publicMethodsAndProperties )_
+It creates a set of public methods and public properties in the AClass class.
+ * Arguments:
+ 	1. _publicMethodsAndProperties_ {object{[_ methodOrPropertyName_ : _methodOrPropValue_ ]}} An object where keys defines the name of the property and the key value represents the method callback or property
+ * Returns: The AClass class.
+
+ ```javascript
+ var NewClass = ExtendableClass.extend()
+ 	.public({
+ 		aProperty: "A property value",
+ 		anotherProp: 5,
+ 		aMethod: funtion () {
+ 			return this.aProperty;
+ 		}
+ 	});
+ ```
+
+#### _AClass.protected( protectedMethodsAndProperties )_
+It creates a set of protected methods and protected properties in the AClass class.
+ * Arguments:
+ 	1. _protectedMethodsAndProperties_ {object{[ _methodOrPropertyName_ : _methodOrPropValue_ ]}} An object where keys defines the name of the property to be created and the key value represents the method callback or property value for them.
+ * Returns: The AClass class.
+
+ ```javascript
+ var NewClass = ExtendableClass.extend()
+ 	.protected({
+ 		aProperty: "A property value",
+ 		anotherProp: 5,
+ 		aMethod: funtion () {
+ 			return this.aProperty;
+ 		}
+ 	});
+ ```
 
 Hey!
 ----
 Do you want to use it in your project or have any comment? I will be so glad to hear it so, please, [let me know](#contacts-credits-and-license).
 
 Contact, credit and license
--------
+---------------------------
 Released under [LGPLv3]
 
 Basically you can use it *wherever you want* but keeping any code modification with the same license or compatible. Please, do not forget about credits :smiley:
