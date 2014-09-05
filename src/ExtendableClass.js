@@ -20,26 +20,22 @@
 
 		var methodHandler;
 		if(overridedMethod) {
-			methodHandler = function () {
-				this.super = function () {
+			var superMethod = function () {
 					var tmp = this.super;
 
 					var returnedValue = overridedMethod.apply(this, arguments);
-
 					this.super = tmp;
 
 					return returnedValue;
-				};
-
-				var returnedValue = publicMethod.apply(this, arguments);
-				return returnedValue;
+			};
+			methodHandler = function () {
+				this.super = superMethod;
+				return publicMethod.apply(this, arguments);
 			};
 		} else {
 			methodHandler = function () {
 				this.super = null;
-				
-				var returnedValue = publicMethod.apply(this, arguments);
-				return returnedValue;
+				return publicMethod.apply(this, arguments);
 			};
 		}
 
@@ -54,26 +50,23 @@
 
 		var methodHandler;
 		if(overridedMethod) {
-			methodHandler = function () {
-				this.super = function () {
+			var superMethod = function () {
 					var tmp = this.super;
 
 					var returnedValue = overridedMethod.apply(this, arguments);
-
 					this.super = tmp;
 
 					return returnedValue;
-				};
-
-				var returnedValue = protectedMethod.apply(this, arguments);
-				return returnedValue;
+			}
+			methodHandler = function () {
+				this.super = superMethod;
+				return protectedMethod.apply(this, arguments);
 			};
 		} else {
 			methodHandler = function () {
 				this.super = null;
 
-				var returnedValue = protectedMethod.apply(this, arguments);
-				return returnedValue;
+				return protectedMethod.apply(this, arguments);
 			};
 		}
 
@@ -122,17 +115,16 @@
 	ExtendableClass.initialize = function (constructorMethod) {
 		if (this.constructorMethod) {
 			var overridedConstructorMethod = this.constructorMethod;
+			var superMethod = function () {
+				var tmp = this.super;
+
+				var returnedValue = overridedConstructorMethod.apply(this, arguments);
+				this.super = tmp;
+
+				return returnedValue;
+			};
 			this.constructorMethod = function () {
-				this.super = function () {
-					var tmp = this.super;
-
-					var returnedValue = overridedConstructorMethod.apply(this, arguments);
-
-					this.super = tmp;
-
-					return returnedValue;
-				};
-
+				this.super = superMethod;
 				constructorMethod.apply(this, arguments);
 			};
 		} else {
