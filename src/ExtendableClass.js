@@ -85,14 +85,12 @@
 	ExtendableClass.addPublicProperty = function (publicProperty, propertyValue) {
 		this.prototype[publicProperty] = propertyValue;
 		this.ProtectedClass.prototype[publicProperty] = propertyValue;
-		this.DataClass.prototype[publicProperty] = propertyValue;
 
 		return this;
 	};
 
 	ExtendableClass.addProtectedProperty = function (protectedProperty, propertyValue) {
 		this.ProtectedClass.prototype[protectedProperty] = propertyValue;
-		this.DataClass.prototype[protectedProperty] = propertyValue;
 
 		return this;
 	};
@@ -149,8 +147,6 @@
 
 	ExtendableClass.ProtectedClass = function () {};
 
-	ExtendableClass.DataClass = function () {};
-
 	ExtendableClass.constructorMethod = null;
 
 	ExtendableClass.parents = [];
@@ -159,7 +155,6 @@
 		this.PublicClass = function () {
 			var publicThis = this;
 			var protectedThis = new this.constructor.ProtectedClass();
-			var dataThis = new this.constructor.DataClass();
 
 			var configPublicProperty = function (publicProperty, propertyValue) {
 				if (publicProperty == "constructor") return;
@@ -169,57 +164,19 @@
 				} else {
 					var propertyDescriptor = {};
 
-					if ( typeof(propertyValue) == "object" && propertyValue.constant ) {
-						propertyDescriptor.writable = false;
-						propertyDescriptor.value = propertyValue.value;
-					} else {
-						if ( typeof(propertyValue) == "object" )
-							dataThis[publicProperty] = propertyValue.value;
-
-						propertyDescriptor.get = function () {
-							return dataThis[publicProperty];
-						};
-						propertyDescriptor.set = function (newValue) {
-							dataThis[publicProperty] = newValue;
-						};
-					}
+					propertyDescriptor.get = function () {
+						return protectedThis[publicProperty];
+					};
+					propertyDescriptor.set = function (newValue) {
+						protectedThis[publicProperty] = newValue;
+					};
 
 					Object.defineProperty(publicThis, publicProperty, propertyDescriptor);
 				}
 			};
 
-			var configProtectedProperty = function (protectedProperty, propertyValue) {
-				if (protectedProperty == "constructor") return;
-				if (protectedProperty == "super") return;
-
-				if (typeof(propertyValue) != "function") {
-					var propertyDescriptor = {};
-
-					if(typeof(propertyValue) == "object" && propertyValue.constant) {
-						propertyDescriptor.writable = false;
-						propertyDescriptor.value = propertyValue.value;	
-					} else {
-						if ( typeof(propertyValue) == "object" )
-							dataThis[protectedProperty] = propertyValue.value;
-						
-						propertyDescriptor.get = function () {
-							return dataThis[protectedProperty];
-						};
-						propertyDescriptor.set = function (newValue) {
-							dataThis[protectedProperty] = newValue;
-						};
-					}
-
-					Object.defineProperty(protectedThis, protectedProperty, propertyDescriptor);
-				}
-			};
-
 			for ( var publicProperty in publicThis ) {
 				configPublicProperty(publicProperty, publicThis[publicProperty]);
-			}
-
-			for ( var protectedProperty in protectedThis ) {
-				configProtectedProperty(protectedProperty, protectedThis[protectedProperty]);
 			}
 
 			if ( this.constructor.constructorMethod )
@@ -232,15 +189,12 @@
 
 		this.PublicClass.PublicClass = null;
 		this.PublicClass.ProtectedClass = function () {};
-		this.PublicClass.DataClass = function () {};
 		this.PublicClass.parents = [this];
 
 		this.PublicClass.prototype = Object.create(this.prototype);
 		this.PublicClass.prototype.constructor = this.PublicClass;
 		this.PublicClass.ProtectedClass.prototype = Object.create(this.ProtectedClass.prototype);
 		this.PublicClass.ProtectedClass.prototype.constructor = this.PublicClass;
-		this.PublicClass.DataClass.prototype = Object.create(this.DataClass.prototype);
-		this.PublicClass.DataClass.prototype.constructor = this.PublicClass;
 
 		this.ProtectedClass.prototype.super = null;
 
