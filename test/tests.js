@@ -96,7 +96,7 @@ describe("The method .addPublicMethod from ExtendableClass classes", function ()
 	NewClass.addPublicMethod(methodName, method);
 
 	it("adds a new public method to an object instance of the class", function () {
-		expect(typeof NewClass.prototype[methodName]).toMatch("function");
+		expect(typeof NewClass.PublicClass.prototype[methodName]).toMatch("function");
 
 		var newObject = new NewClass();
 
@@ -107,7 +107,7 @@ describe("The method .addPublicMethod from ExtendableClass classes", function ()
 		var NewClass2 = NewClass.extend();
 
 		it("inherits the method", function () {
-			expect(typeof NewClass2.prototype[methodName]).toMatch("function");
+			expect(typeof NewClass2.PublicClass.prototype[methodName]).toMatch("function");
 
 			var newObject2 = new NewClass2();
 
@@ -123,8 +123,8 @@ describe("The method .addPublicProperty from a ExtendableClass class", function 
 		.addPublicProperty("myProperty", randomNumber);
 
 	it("adds a new public property to object instance of the class", function () {
-		expect(NewClass.prototype.hasOwnProperty("myProperty")).toBe(true);
-		expect(typeof NewClass.prototype.myProperty).toMatch("number");
+		expect(NewClass.PublicClass.prototype.hasOwnProperty("myProperty")).toBe(true);
+		expect(typeof NewClass.PublicClass.prototype.myProperty).toMatch("number");
 
 		var newObject = new NewClass();
 
@@ -134,8 +134,8 @@ describe("The method .addPublicProperty from a ExtendableClass class", function 
 	describe("In a descendant class, the added property in parent class", function () {
 		var NewClass2 = NewClass.extend();
 		it("inherits the property", function () {
-			expect(NewClass.prototype.hasOwnProperty("myProperty")).toBe(true);
-			expect(typeof NewClass.prototype.myProperty).toMatch("number");
+			expect(NewClass.PublicClass.prototype.hasOwnProperty("myProperty")).toBe(true);
+			expect(typeof NewClass.PublicClass.prototype.myProperty).toMatch("number");
 
 			var newObject2 = new NewClass2();
 
@@ -163,10 +163,10 @@ describe("The method .public from ExtendableClass classes", function () {
 		});
 
 	it("adds several new public methods and properties to an object instance of the class", function () {
-		expect(typeof NewClass.prototype.method1).toMatch("function");
-		expect(typeof NewClass.prototype.method2).toMatch("function");
-		expect(typeof NewClass.prototype.myProperty1).toMatch("number");
-		expect(typeof NewClass.prototype.myProperty2).toMatch("number");
+		expect(typeof NewClass.PublicClass.prototype.method1).toMatch("function");
+		expect(typeof NewClass.PublicClass.prototype.method2).toMatch("function");
+		expect(typeof NewClass.PublicClass.prototype.myProperty1).toMatch("number");
+		expect(typeof NewClass.PublicClass.prototype.myProperty2).toMatch("number");
 
 		var newObject = new NewClass();
 
@@ -180,10 +180,10 @@ describe("The method .public from ExtendableClass classes", function () {
 		var NewClass2 = NewClass.extend();
 
 		it("inherits them", function () {
-			expect(typeof NewClass2.prototype.method1).toMatch("function");
-			expect(typeof NewClass2.prototype.method2).toMatch("function");
-			expect(typeof NewClass2.prototype.myProperty1).toMatch("number");
-			expect(typeof NewClass2.prototype.myProperty2).toMatch("number");
+			expect(typeof NewClass2.PublicClass.prototype.method1).toMatch("function");
+			expect(typeof NewClass2.PublicClass.prototype.method2).toMatch("function");
+			expect(typeof NewClass2.PublicClass.prototype.myProperty1).toMatch("number");
+			expect(typeof NewClass2.PublicClass.prototype.myProperty2).toMatch("number");
 
 			var newObject2 = new NewClass2();
 
@@ -206,6 +206,7 @@ describe("The method addProtectedMethod from a ExtendableClass", function () {
 
 	it("adds a protected method that cannot be accessible from the public scope, only from the protected scope", function () {
 		expect(NewClass.prototype[protectedMethodName]).toBeUndefined();
+		expect(NewClass.PublicClass.prototype[protectedMethodName]).toBeUndefined();
 		expect(typeof NewClass.ProtectedClass.prototype[protectedMethodName]).toBe("function");
 
 		NewClass

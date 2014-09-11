@@ -16,11 +16,13 @@
 	window.ExtendableClass = ExtendableClass;
 
 	ExtendableClass.addPublicMethod = function (publicProperty, publicMethod) {
-		var overridedMethod = this.prototype[publicProperty];
+		var Class = this;
+		var overridedMethod = Class.PublicClass.prototype[publicProperty];
 
 		var methodHandler;
 		if(overridedMethod) {
 			var superMethod = function () {
+					// Assumes protected context
 					var tmp = this.super;
 
 					var returnedValue = overridedMethod.apply(this, arguments);
@@ -29,28 +31,32 @@
 					return returnedValue;
 			};
 			methodHandler = function () {
+				// Assumes protected context
 				this.super = superMethod;
 				return publicMethod.apply(this, arguments);
 			};
 		} else {
 			methodHandler = function () {
+				// Assumes protected context
 				this.super = null;
 				return publicMethod.apply(this, arguments);
 			};
 		}
 
-		this.prototype[publicProperty] = methodHandler;
-		this.ProtectedClass.prototype[publicProperty] = methodHandler;
+		Class.PublicClass.prototype[publicProperty] = methodHandler;
+		Class.ProtectedClass.prototype[publicProperty] = methodHandler;
 
-		return this;
+		return Class;
 	};
 
 	ExtendableClass.addProtectedMethod = function (protectedProperty, protectedMethod) {
-		var overridedMethod = this.ProtectedClass.prototype[protectedProperty];
+		var Class = this;
+		var overridedMethod = Class.ProtectedClass.prototype[protectedProperty];
 
 		var methodHandler;
 		if(overridedMethod) {
 			var superMethod = function () {
+					// Assumes protected context
 					var tmp = this.super;
 
 					var returnedValue = overridedMethod.apply(this, arguments);
@@ -59,84 +65,102 @@
 					return returnedValue;
 			}
 			methodHandler = function () {
+				// Assumes protected context
 				this.super = superMethod;
 				return protectedMethod.apply(this, arguments);
 			};
 		} else {
 			methodHandler = function () {
+				// Assumes protected context
 				this.super = null;
 
 				return protectedMethod.apply(this, arguments);
 			};
 		}
 
-		this.ProtectedClass.prototype[protectedProperty] = methodHandler;
+		Class.ProtectedClass.prototype[protectedProperty] = methodHandler;
 
-		return this;
+		return Class;
 	};
 
 	ExtendableClass.addPublicProperty = function (publicProperty, propertyValue) {
-		this.prototype[publicProperty] = propertyValue;
-		this.ProtectedClass.prototype[publicProperty] = propertyValue;
+		var Class = this;
 
-		return this;
+		Class.PublicClass.prototype[publicProperty] = propertyValue;
+		Class.ProtectedClass.prototype[publicProperty] = propertyValue;
+
+		return Class;
 	};
 
 	ExtendableClass.addProtectedProperty = function (protectedProperty, propertyValue) {
-		this.ProtectedClass.prototype[protectedProperty] = propertyValue;
+		var Class = this;
 
-		return this;
+		Class.ProtectedClass.prototype[protectedProperty] = propertyValue;
+
+		return Class;
 	};
 
 	ExtendableClass.public = function (publicObject) {
+		var Class = this;
 		for ( var publicProperty in publicObject ) {
-			if ( typeof(publicObject[publicProperty]) == "function" ) {
-				this.addPublicMethod(publicProperty, publicObject[publicProperty]);
+			if ( typeof publicObject[publicProperty] == "function" ) {
+				Class.addPublicMethod(publicProperty, publicObject[publicProperty]);
 			} else {
-				this.addPublicProperty(publicProperty, publicObject[publicProperty]);
+				Class.addPublicProperty(publicProperty, publicObject[publicProperty]);
 			}
 		}
 
-		return this;
+		return Class;
 	};
 
 	ExtendableClass.protected = function (protectedObject) {
+		var Class = this;
 		for ( var protectedProperty in protectedObject ) {
-			if ( typeof(protectedObject[protectedProperty]) == "function" ) {
-				this.addProtectedMethod(protectedProperty, protectedObject[protectedProperty]);
+			if ( typeof protectedObject[protectedProperty] == "function" ) {
+				Class.addProtectedMethod(protectedProperty, protectedObject[protectedProperty]);
 			} else {
-				this.addProtectedProperty(protectedProperty, protectedObject[protectedProperty]);
+				Class.addProtectedProperty(protectedProperty, protectedObject[protectedProperty]);
 			}
 		}
 
-		return this;
+		return Class;
 	};
 
 	ExtendableClass.initialize = function (constructorMethod) {
-		if (this.constructorMethod) {
-			var overridedConstructorMethod = this.constructorMethod;
+		var Class = this;
+
+		if (Class.constructorMethod) {
+			var overridedConstructorMethod = Class.constructorMethod;
 			var superMethod = function () {
+				// Assumes protected context
 				var tmp = this.super;
 
-				var returnedValue = overridedConstructorMethod.apply(this, arguments);
-				this.super = tmp;
+				if (arguments.length === 0) overridedConstructorMethod.call(this);
+				else overridedConstructorMethod.apply(this, arguments);
 
-				return returnedValue;
+				this.super = tmp;
 			};
-			this.constructorMethod = function () {
+			Class.constructorMethod = function () {
+				// Assumes protected context
 				this.super = superMethod;
-				constructorMethod.apply(this, arguments);
+
+				if (arguments.length === 0) constructorMethod.call(this);
+				else constructorMethod.apply(this, arguments);
 			};
 		} else {
-			this.constructorMethod = function () {
+			Class.constructorMethod = function () {
+				// Assumes protected context
 				this.super = null;
-				constructorMethod.apply(this, arguments);
+
+				if (arguments.length === 0) constructorMethod.call(this);
+				else constructorMethod.apply(this, arguments);
 			};
 		}
 
-		return this;
+		return Class;
 	};
 
+	ExtendableClass.PublicClass = function () {};
 	ExtendableClass.ProtectedClass = function () {};
 
 	ExtendableClass.constructorMethod = null;
@@ -144,52 +168,60 @@
 	ExtendableClass.parents = [];
 
 	ExtendableClass.extend = function () {
-		this.PublicClass = function () {
+
+		var MainContext = function () {
+			var Class = this.Class;
 			var publicThis = this;
-			var protectedThis = new this.constructor.ProtectedClass();
+			var protectedThis = Object.create( Class.ProtectedClass.prototype );
 
-			var configPublicProperty = function (publicProperty, propertyValue) {
-				if (publicProperty == "constructor") return;
-
-				if ( typeof(propertyValue) == "function" ) {
-					publicThis[publicProperty] = propertyValue.bind(protectedThis);
+			var configPublicProperty = function (publicProperty, propertyValue, publicThis, protectedThis) {
+				if ( typeof propertyValue == "function" ) {
+					publicThis[publicProperty] = function () {
+						if (arguments.length === 0) return protectedThis[publicProperty]();
+						else return propertyValue.apply(protectedThis, arguments);
+					}
 				} else {
-					var propertyDescriptor = {};
-
-					propertyDescriptor.get = function () {
-						return protectedThis[publicProperty];
-					};
-					propertyDescriptor.set = function (newValue) {
-						protectedThis[publicProperty] = newValue;
+					var propertyDescriptor = {
+						get: function () {
+							return protectedThis[publicProperty];
+						},
+						set: function (newValue) {
+							protectedThis[publicProperty] = newValue;
+						}
 					};
 
 					Object.defineProperty(publicThis, publicProperty, propertyDescriptor);
 				}
 			};
 
-			for ( var publicProperty in publicThis ) {
-				configPublicProperty(publicProperty, publicThis[publicProperty]);
+			var publicClassPrototype = Class.PublicClass.prototype;
+			for ( var publicProperty in publicClassPrototype ) {
+				configPublicProperty(publicProperty, publicClassPrototype[publicProperty], publicThis, protectedThis);
 			}
 
-			if ( this.constructor.constructorMethod )
-				this.constructor.constructorMethod.apply(protectedThis, arguments);
+			if ( Class.constructorMethod ) {
+				if (arguments.length === 0) Class.constructorMethod.call(protectedThis);
+				else Class.constructorMethod.apply(protectedThis, arguments);
+			}
 		};
 
+		// Copy all "static" methods and properties
 		for (var p in this) {
-			this.PublicClass[p] = this[p];
+			MainContext[p] = this[p];
 		}
 
-		this.PublicClass.PublicClass = null;
-		this.PublicClass.ProtectedClass = function () {};
-		this.PublicClass.parents = [this];
+		MainContext.PublicClass = function () {};
+		MainContext.ProtectedClass = function () {};
+		MainContext.parents = [this];
 
-		this.PublicClass.prototype = Object.create(this.prototype);
-		this.PublicClass.prototype.constructor = this.PublicClass;
-		this.PublicClass.ProtectedClass.prototype = Object.create(this.ProtectedClass.prototype);
-		this.PublicClass.ProtectedClass.prototype.constructor = this.PublicClass;
+		MainContext.prototype = Object.create(this.prototype);
+		MainContext.prototype.Class = MainContext;
 
-		this.ProtectedClass.prototype.super = null;
+		MainContext.PublicClass.prototype = Object.create(this.PublicClass.prototype);
+		MainContext.ProtectedClass.prototype = Object.create(this.ProtectedClass.prototype);
 
-		return this.PublicClass;
+		MainContext.prototype.super = null;
+
+		return MainContext;
 	};
 })(window);
