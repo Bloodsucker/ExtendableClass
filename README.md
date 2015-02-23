@@ -15,8 +15,6 @@ Yes, it works.
 
 ExtendableClass is a library that forces to javascript to have features which by default are not possible. It hacks javascript a little bit, thus it requires some extra process to achieve it, however it was built with the optimization in mind.
 
-This question can be compared with the question of using jQuery in your own projects. If you like to use jQuery, why would not like you to use ExtendableClass in your projects in order to get this OO features as well?
-
 Dependencies
 ------------
 It does not have any dependence. It is pure javascript so it is compatible with any other library. Nevertheless, it uses a global variable called ExtendableClass which is the base-class Class for every class in order to get the library features.
